@@ -1,0 +1,3 @@
+PppP	AaaaaaaaaaaaaaaaA	NnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnN	CC	CccccccccC	AaaaaaaaaaaaaaA
+PpP	AaaaaaaaaaA	NnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnN	C	CccccC	AaaaaA
+PpP	AaaaaA	NnnnnnnnnnnnnnnnN	C	CcccC	AaaaaaaaaA
