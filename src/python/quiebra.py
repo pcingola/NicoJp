@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-# Define input & output file names
-# TODO: This should be just a command line argument
+import argparse
 
+# Default input & output file names
 in_file = "in.txt"
 out_file = "out.txt"
 
@@ -56,6 +56,15 @@ def extract(l, se):
 # ---
 # Main
 # ---
+
+parser = argparse.ArgumentParser(description='Process input "Quibra" formatted files.')
+parser.add_argument('-infile', metavar='infile.txt', type=str, help='Input (txt) file', default=in_file)
+parser.add_argument('-outfile', metavar='outfile.txt', type=str, help='Output file', default=out_file)
+
+args = parser.parse_args()
+in_file = args.infile
+out_file = args.outfile
+print("Input file  : '%0s'\nOutput file : '%1s'" % (in_file, out_file))
 
 # Open file and read lines
 with open(in_file) as fin, open(out_file, 'w') as fout:
