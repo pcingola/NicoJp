@@ -41,6 +41,9 @@ foreach($line in Get-Content $inFile) {
 		$swift = $line[$swiftStart..$swiftEnd] -join ''
 		$cuenta = $line[$cuentaStart..$cuentaEnd] -join ''
 
+		# Prepend '/'
+		$cuenta = "/$cuenta"
+
 		# TODO: Write propper format checking for each field
 
 		# Create output line
