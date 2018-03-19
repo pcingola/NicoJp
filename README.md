@@ -9,8 +9,7 @@ Split input files into required fields.
 - First version using PowerShell (yuck!)
 - Python version
 
-
-# Python version
+# Quiebra (python version)
 
 Python version accepts input/output files as command line arguments
 ```
@@ -37,7 +36,7 @@ PpP	AaaaaaaaaaA	NnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnN	C	CccccC	AaaaaA
 PpP	AaaaaA	NnnnnnnnnnnnnnnnN	C	CcccC	AaaaaaaaaA
 ```
 
-# Environment setpup
+### Environment setpup
 
 Currently using Python 3, if you have mutiple python verisons, you can create a virtual environment:
 
@@ -53,7 +52,20 @@ cd NicoJp
 ./bin/activate
 ```
 
-# Parsing rules for Bank:
+# Canal (Python)
+
+This programs parses a (messier) XLS file using only one cell for all bank data
+
+### Requirements
+
+Language
+* Python 3
+
+Pip moules:
+* Pandas
+* xlrd
+
+### Parsing rules for Bank:
 
 Parsing rules:
 - If `IBAN` exists, no need for other data
@@ -62,7 +74,7 @@ Parsing rules:
 - If no `SWIFT` is present, then we need `ABA`
 - If neither `SWIFT` nor `ABA` exists, then `Bank name` is required
 
-# Input formats (Banks field):
+### Input formats (Banks field):
 
 * SWIFT: From 8 to 11 alphanumeric chars. Always starts with a letter, e.g.:
 ```
@@ -100,6 +112,3 @@ CC 382826277272
 Routing number: 098765451
 ABA 098765451
 ```
-
-
-# Field formats
