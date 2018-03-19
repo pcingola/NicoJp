@@ -4,12 +4,12 @@ Scripts for Nico's JP processes
 
 # Quiebra
 
-### Power shell version)
+### Power shell version
 
 Split input files into required fields.
 First version using PowerShell (yuck!)
 
-### Quiebra (python version)
+### Python version
 
 Python version accepts input/output files as command line arguments
 ```
