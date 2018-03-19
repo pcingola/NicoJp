@@ -31,7 +31,7 @@ optional arguments:
 So, to run the example input file, you can do:
 ```
 $ cd NicoJp
-$ ./src/python/quiebra.py -i data/in.txt -o data/out.txt 
+$ ./src/python/quiebra.py -i data/in.txt -o data/out.txt
 PppP	AaaaaaaaaaaaaaaaA	NnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnN	CC	CccccccccC	AaaaaaaaaaaaaaA
 PpP	AaaaaaaaaaA	NnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnN	C	CccccC	AaaaaA
 PpP	AaaaaA	NnnnnnnnnnnnnnnnN	C	CcccC	AaaaaaaaaA
@@ -52,3 +52,54 @@ To cativate the virtual environment, do the usual:
 cd NicoJp
 ./bin/activate
 ```
+
+# Parsing rules for Bank:
+
+Parsing rules:
+- If `IBAN` exists, no need for other data
+- If no `IBAN` is present, then `Account` is required
+- If `SWIFT` is present, then no other information is required
+- If no `SWIFT` is present, then we need `ABA`
+- If neither `SWIFT` nor `ABA` exists, then `Bank name` is required
+
+# Input formats (Banks field):
+
+* SWIFT: From 8 to 11 alphanumeric chars. Always starts with a letter, e.g.:
+```
+Swift:CRESPI33S
+Swift number:CRESPI33S
+Swift num: CRESPI33S
+Swift Code: CRESPI33S
+Swift Code CRESPI33S
+Bic Code CRESPI33S
+Bic CRESPI33S
+Swift Code nr. CRESPI33S
+Code number:CRESPI33S
+Bic-code:CRESPI33S
+```
+
+* IBAN : IBAN is up to 34 alphanumeric chars. The first two are always letters. e.g:
+```
+IBAN: AT3920029282727
+IBAN-NR. AT3920029282727
+IBAN NO. AT3920029282727
+IBAN-CODE:AT3920029282727
+```
+
+* Account number examples:
+```
+ACC NO: 382826277272
+ACCOUNT #382826277272
+ACCOUNT NO: 382826277272
+A/C NR. 382826277272
+CC 382826277272
+```
+
+* ABA number examples: ABA is a 9 digit number
+```
+Routing number: 098765451
+ABA 098765451
+```
+
+
+# Field formats
