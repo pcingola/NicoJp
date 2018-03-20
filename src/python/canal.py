@@ -74,6 +74,11 @@ class BankAccount:
         if m:
             return m.group(6)
 
+        m = re.search(r"(^|\s+)(\d)+((\-|\.|/|\s)+\d+)*(\s|$)", s, flags=re.I)
+        if m:
+            digits = [c for c in m.group(0) if c.isdigit()]
+            return ''.join(digits)
+
         return ''
 
     def parse_cbu(self, s):
@@ -95,11 +100,9 @@ class BankAccount:
     def parse_swift(self, s):
         """ Parse SWIFT information """
         # Check against a databse of all SWIFT codes
-        print("SWIFT: " + s)
         if self.swiftcodes:
             for m in re.finditer(r"([A-Z]{6}[A-Z0-9]{2})([A-Z0-9]{3})?", s, flags=re.I):
                 swift = m.group(0)
-                print("\tIS SWIFT: " + swift + "\t" + str(self.swiftcodes.has(swift)))
                 if self.swiftcodes.has(swift):
                     return swift
 
