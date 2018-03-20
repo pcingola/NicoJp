@@ -11,6 +11,9 @@ DEBUG = False
 in_file = "data/example.xlsx"
 out_file = "out.txt"
 
+# All SWIFT codes, listed in a TXT file (one per line)
+swift_file = "data/swift_codes.txt"
+
 # Where the usefull information is
 TITLE_ROW = 8  # Title
 FIRST_ROW = TITLE_ROW + 1
@@ -45,8 +48,12 @@ def na2zero(v):
 class BankAccount:
     """ Bank including account, CBU, IBAN, SWIFT, etc. """
 
-    def __init__(self, bank):
+    def __init__(self, bank, swiftcodes=None):
         self.bank = bank
+        self.swiftcodes = swiftcodes
+        self.parse(bank)
+
+    def parse(self, bank):
         self.aba = self.parse_aba(bank)
         self.account = self.parse_account(bank)
         self.cbu = self.parse_cbu(bank)
@@ -87,6 +94,16 @@ class BankAccount:
 
     def parse_swift(self, s):
         """ Parse SWIFT information """
+        # Check against a databse of all SWIFT codes
+        print("SWIFT: " + s)
+        if self.swiftcodes:
+            for m in re.finditer(r"([A-Z]{6}[A-Z0-9]{2})([A-Z0-9]{3})?", s, flags=re.I):
+                swift = m.group(0)
+                print("\tIS SWIFT: " + swift + "\t" + str(self.swiftcodes.has(swift)))
+                if self.swiftcodes.has(swift):
+                    return swift
+
+        # Search using 'swift' keywords
         m = re.search(r"(swift|bic|code)(-|\s+)?(code|number|num|no|nr|#)?(\.)?(-|\s+)?(code|number|num|no|nr|#)?(\.)?\s*(:)?\s*(\w+)", s, flags=re.I)
         if m:
             return m.group(9)
@@ -99,18 +116,21 @@ class BankAccount:
         if not sa:
             sa = self.aba
 
-        ica = self.iban  # IBAN, CBU or Account
-        if not ica:
-            ica = self.cbu
-        if not ica:
-            ica = self.account
+        ica = ''  # IBAN, CBU or Account. Prepend a '/' to IBA/CBU/Account
+        if self.iban:
+            ica = '/' + self.iban
+        elif self.cbu:
+            ica = '/' + self.cbu
+        elif self.account:
+            ica = '/' + self.account
 
         return "{0}\t{1}".format(sa, ica)
 
 
 class Payment:
     """ Represents one payment line (in the XLS) """
-    def __init__(self, dfrow, cols):
+    def __init__(self, dfrow, cols, swiftcodes):
+        self.swiftcodes = swiftcodes
         self.parse_line(dfrow, cols)
 
     def add(self, payment):
@@ -141,8 +161,8 @@ class Payment:
 
         self.bank = na2empty(rowdict[BANK])
         (binter, bbenef) = self.split_bank(self.bank)
-        self.bank_intermediary = BankAccount(binter)
-        self.bank_beneficiary = BankAccount(bbenef)
+        self.bank_intermediary = BankAccount(binter, self.swiftcodes)
+        self.bank_beneficiary = BankAccount(bbenef, self.swiftcodes)
 
     def split_bank(self, s):
         """ Parse beneficiary bank """
@@ -173,9 +193,27 @@ class Payment:
         return ('', s)
 
     def __str__(self):
-        return "{0}\t{1}\t{2}\t{3:f}\n\tbank interm: {4}\n\tbank benef: {5}".format(
+        return "{0} {1}\t{2}\t{3:f}\t{4}\t{5}\t{6}".format(
                self.provider, self.provider2, self.currency, self.amount,
-               self.bank_intermediary, self.bank_beneficiary)
+               self.bank_beneficiary, self.bank_intermediary, self.bank)
+
+
+class SwiftCodes:
+    """ Read all SWIFT codes from a TXT file """
+    def __init__(self, swiftfile=swift_file):
+        self.swiftfile = swiftfile
+        self.load(swiftfile)
+
+    def has(self, swift):
+        return swift in self.swiftcodes
+
+    def load(self, swiftfile):
+        with open(swiftfile) as f:
+            lines = f.readlines()
+            self.swiftcodes = set([l.strip() for l in lines])
+
+    def __str__(self):
+        return str(self.swiftcodes)
 
 
 class XlsFile:
@@ -184,9 +222,10 @@ class XlsFile:
     Parse and create payment output file (tab separated txt)
     """
 
-    def __init__(self, in_file, out_file):
+    def __init__(self, in_file, out_file, swiftcodes):
         self.in_file = in_file
         self.out_file = out_file
+        self.swiftcodes = swiftcodes
         self.process()
 
     def process(self):
@@ -212,7 +251,7 @@ class XlsFile:
         byprovider = dict()
         for i in range(1, len(self.data)):
             line = self.data.iloc[i].values.tolist()
-            payment = Payment(line, self.colnums)
+            payment = Payment(line, self.colnums, self.swiftcodes)
 
             if payment.is_total():
                 pass  # Ignore 'total' lines
@@ -255,8 +294,9 @@ class XlsFile:
         out = ''
         keys = list(self.byprovider.keys())
         keys.sort()
+        i = 1
         for k in keys:
-            out += str(self.byprovider[k]) + '\n'
+            out += str(i) + '\t' + str(self.byprovider[k]) + '\n'
         return out
 
 
@@ -265,14 +305,17 @@ def parse_commnad_line_args():
     parser = argparse.ArgumentParser(description='Process input "Quibra" formatted files.')
     parser.add_argument('-i', '--infile', metavar='infile.txt', type=str, help='Input (txt) file', default=in_file)
     parser.add_argument('-o', '--outfile', metavar='outfile.txt', type=str, help='Output file', default=out_file)
+    parser.add_argument('-s', '--swiftfile', metavar='swiftfile.txt', type=str, help='Swift codes file', default=swift_file)
     args = parser.parse_args()
-    return (args.infile, args.outfile)
+    return (args.infile, args.outfile, args.swiftfile)
 
 # ---
 # Main
 # ---
 if __name__ == '__main__':
-    (in_file, out_file) = parse_commnad_line_args()  # Parse command line
-    xls = XlsFile(in_file, out_file)  # Create input file
+    (in_file, out_file, swift_file) = parse_commnad_line_args()  # Parse command line
+    swiftcodes = SwiftCodes(swift_file)
+    print("SWIFT CODES: " + str(swiftcodes))
+    xls = XlsFile(in_file, out_file, swiftcodes)  # Create input file
     xls.process()  # Process file (parse input and write output file)
     print(xls)
