@@ -95,9 +95,17 @@ class BankAccount:
         return ''
 
     def __str__(self):
-        return "aba: '{0}'\taccount: '{1}'\tcbu: '{2}'\tiban: '{3}'\tswift: '{4}'\tbank: '{5}'".format(
-               self.aba, self.account, self.cbu, self.iban, self.swift,
-               self.bank)
+        sa = self.swift  # Swift or ABA
+        if not sa:
+            sa = self.aba
+
+        ica = self.iban  # IBAN, CBU or Account
+        if not ica:
+            ica = self.cbu
+        if not ica:
+            ica = self.account
+
+        return "{0}\t{1}".format(sa, ica)
 
 
 class Payment:
