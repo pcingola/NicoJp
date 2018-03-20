@@ -76,7 +76,10 @@ Parsing rules:
 
 ### Input formats (Banks field):
 
-* SWIFT: From 8 to 11 alphanumeric chars. Always starts with a letter, e.g.:
+* SWIFT: From 8 to 11 alphanumeric chars. Always starts with a letter,
+Specifically, it refers to ISO-9362 (Bank Identification Codes / BIC): https://en.wikipedia.org/wiki/ISO_9362
+e.g.:
+
 ```
 Swift:CRESPI33S
 Swift number:CRESPI33S
