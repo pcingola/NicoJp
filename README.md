@@ -78,6 +78,7 @@ Parsing rules:
 
 * SWIFT: From 8 to 11 alphanumeric chars. Always starts with a letter,
 Specifically, it refers to ISO-9362 (Bank Identification Codes / BIC): https://en.wikipedia.org/wiki/ISO_9362
+For a complete list of SWIFT codes, try: https://github.com/PeterNotenboom/SwiftCodes/
 e.g.:
 
 ```
