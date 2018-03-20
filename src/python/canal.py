@@ -55,19 +55,15 @@ class BankAccount:
 
     def parse_aba(self, s):
         """ Parse ABA number information """
-        m = re.search(r"(aba|routing number)\s*(:?)\s*(\w+)", s, flags=re.I)
+        m = re.search(r"(aba|routing)(\-|\s+)?(code|number|num|no|nr|#)?(\.)?\s*(:)?\s*(\w+)", s, flags=re.I)
         if m:
-            return m.group(3)
+            return m.group(6)
 
         return ''
 
     def parse_account(self, s):
         """ Parse Account number information """
-        m = re.search(r"(account|acct|acc|cc|a/c)\s*:\s*(\w+)", s, flags=re.I)
-        if m:
-            return m.group(2)
-
-        m = re.search(r"(account|acct|acc|cc|a/c)(\-|\s+)(no|nr|number|num)(\.?)\s*(:?)\s*(\w+)", s, flags=re.I)
+        m = re.search(r"(account|acct|acc|cc|a/c)(\-|\s+)?(code|number|num|no|nr|#)?(\.)?\s*(:)?\s*(\w+)", s, flags=re.I)
         if m:
             return m.group(6)
 
@@ -75,19 +71,15 @@ class BankAccount:
 
     def parse_cbu(self, s):
         """ Parse CBU information """
-        m = re.search(r"(cbu)\s*(:?)\s*(\w+)", s, flags=re.I)
+        m = re.search(r"(cbu)(\-|\s+)?(code|number|num|no|nr|#)?(\.)?\s*(:)?\s*(\w+)", s, flags=re.I)
         if m:
-            return m.group(3)
+            return m.group(6)
 
         return ''
 
     def parse_iban(self, s):
         """ Parse IBAN information """
-        m = re.search(r"(iban)\s*:\s*(\w+)", s, flags=re.I)
-        if m:
-            return m.group(2)
-
-        m = re.search(r"(iban)(\-|\s+)(no|nr|num|number)(\.?)\s*(:?)\s*(\w+)", s, flags=re.I)
+        m = re.search(r"(iban)(-|\s+)?(code|number|num|no|nr|#)?(\.)?\s*(:)?\s*(\w+)", s, flags=re.I)
         if m:
             return m.group(6)
 
@@ -95,21 +87,9 @@ class BankAccount:
 
     def parse_swift(self, s):
         """ Parse SWIFT information """
-        m = re.search(r"(swift|bic|bic-code)\s*:\s*(\w+)", s, flags=re.I)
+        m = re.search(r"(swift|bic|code)(-|\s+)?(code|number|num|no|nr|#)?(\.)?(-|\s+)?(code|number|num|no|nr|#)?(\.)?\s*(:)?\s*(\w+)", s, flags=re.I)
         if m:
-            return m.group(2)
-
-        m = re.search(r"(swift|bic|bic-code)\s+(code|num|number|nr)(\.?)\s+(\w+)", s, flags=re.I)
-        if m:
-            return m.group(3)
-
-        m = re.search(r"(swift|bic|bic-code)\s+(\w+\s*)+:\s*(\w+)", s, flags=re.I)
-        if m:
-            return m.group(3)
-
-        m = re.search(r"(swift|bic|bic-code)\s+(\w+)", s, flags=re.I)
-        if m:
-            return m.group(2)
+            return m.group(9)
 
         # Not found
         return ''
@@ -283,7 +263,8 @@ def parse_commnad_line_args():
 # ---
 # Main
 # ---
-(in_file, out_file) = parse_commnad_line_args()  # Parse command line
-xls = XlsFile(in_file, out_file)  # Create input file
-xls.process()  # Process file (parse input and write output file)
-print(xls)
+if __name__ == '__main__':
+    (in_file, out_file) = parse_commnad_line_args()  # Parse command line
+    xls = XlsFile(in_file, out_file)  # Create input file
+    xls.process()  # Process file (parse input and write output file)
+    print(xls)
