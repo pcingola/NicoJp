@@ -121,11 +121,11 @@ ABA 098765451
 
 The output is a tab-separated TXT with the following columns:
 
-1 - Operation number: Integer 1 ... N
-2 - Amount (with currency?)
-3 - Beneficiary: PROVIDER + ' ' + PROVIDER2
-4 - SWIFT or ABA (beneficiary bank)
-5 - IBAN or CBU or Account (beneficiary bank)
-6 - SWIFT or ABA (intermediary bank)
-7 - IBAN or CBU or Account (intermediary bank)
-8 - Original (unparsed) 'Bank' string
+1. Operation number: Integer 1 ... N
+1. Amount (with currency?)
+1. Beneficiary: PROVIDER + ' ' + PROVIDER2
+1. SWIFT or ABA (beneficiary bank)
+1. IBAN or CBU or Account (beneficiary bank)
+1. SWIFT or ABA (intermediary bank)
+1. IBAN or CBU or Account (intermediary bank)
+1. Original (unparsed) 'Bank' string
