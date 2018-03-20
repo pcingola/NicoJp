@@ -73,6 +73,12 @@ class TestCanal(ut.TestCase):
         self.assertEqual(b.swift, 'JPMRUS31')
         self.assertEqual(b.account, '178992312017323232')
 
+    def test_bank_6(self):
+        sc = ca.SwiftCodes()
+        b = ca.BankAccount("BENEFICIARY BANK BBVA FRANCES ARGENTINA BFRPARBA CBU: 1230012301230123", sc)
+        self.assertEqual(b.swift, 'BFRPARBA')
+        self.assertEqual(b.cbu, '1230012301230123')
+
     def test_iban_1(self):
         b = ca.BankAccount('bankbankbank IBAN: AT3920029282727 bankbankbank')
         self.assertEqual(b.iban, 'AT3920029282727')
@@ -96,11 +102,6 @@ class TestCanal(ut.TestCase):
     def test_iban_6(self):
         b = ca.BankAccount('bankbankbank IBAN NO.: AT3920029282727 bankbankbank')
         self.assertEqual(b.iban, 'AT3920029282727')
-
-    def test_bank_5(self):
-        b = ca.BankAccount("BENEFICIARY BANK BBVA FRANCES ARGENTINA BBVAARBA CBU: 1230012301230123")
-        # self.assertEqual(b.swift, 'BBVAARBA')
-        self.assertEqual(b.cbu, '1230012301230123')
 
     def test_swift_1(self):
         b = ca.BankAccount('bankbankbank Swift:CRESPI33S bankbankbank')

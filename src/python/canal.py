@@ -196,13 +196,14 @@ class Payment:
         return ('', s)
 
     def __str__(self):
-        return "{0} {1}\t{2}\t{3:f}\t{4}\t{5}\t{6}".format(
-               self.provider, self.provider2, self.currency, self.amount,
-               self.bank_beneficiary, self.bank_intermediary, self.bank)
+        return "{0} {1}\t{2:f}\t{3}\t{4}\t{5}\t{6}".format(
+               self.provider, self.provider2, self.amount,
+               self.bank_beneficiary, self.bank_intermediary,
+               self.currency, self.bank)
 
 
 class SwiftCodes:
-    """ Read all SWIFT codes from a TXT file """
+    """ SWIFT codes 'database' (TXT file) """
     def __init__(self, swiftfile=swift_file):
         self.swiftfile = swiftfile
         self.load(swiftfile)
@@ -293,13 +294,25 @@ class XlsFile:
 
         return colnum
 
+    def write(self):
+        """ Write output file """
+        print("Writing output file '{0}'".format(self.out_file))
+        with open(self.out_file, "w") as fout:
+            fout.write(str(self))
+
     def __str__(self):
-        out = ''
+        # Title
+        out = ("Number\tProvider\tAmount" +
+               "\tSWIFT/ABA (Beneficiary)\tIBAN / CBU / Account (Beneficiary)" +
+               "\tSWIFT/ABA (Intermediary)\tIBAN / CBU / Account (Intermediary)" +
+               "\tCurrency\tBank (raw)\n")
+
         keys = list(self.byprovider.keys())
         keys.sort()
-        i = 1
+        idx = 1
         for k in keys:
-            out += str(i) + '\t' + str(self.byprovider[k]) + '\n'
+            out += str(idx) + '\t' + str(self.byprovider[k]) + '\n'
+            idx = idx + 1
         return out
 
 
@@ -318,7 +331,7 @@ def parse_commnad_line_args():
 if __name__ == '__main__':
     (in_file, out_file, swift_file) = parse_commnad_line_args()  # Parse command line
     swiftcodes = SwiftCodes(swift_file)
-    print("SWIFT CODES: " + str(swiftcodes))
     xls = XlsFile(in_file, out_file, swiftcodes)  # Create input file
     xls.process()  # Process file (parse input and write output file)
     print(xls)
+    xls.write()
