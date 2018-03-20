@@ -8,11 +8,11 @@ import re
 DEBUG = False
 
 # Default input & output file names
-in_file = "data/example.xlsx"
+in_file = "in.xlsx"
 out_file = "out.txt"
 
 # All SWIFT codes, listed in a TXT file (one per line)
-swift_file = "data/swift_codes.txt"
+swift_file = "swift_codes.txt"
 
 # Where the usefull information is
 TITLE_ROW = 8  # Title
